@@ -247,3 +247,27 @@ def direct_transform(a):
             sum += a[k] * (__primitive_element**-i)**k
         A.append(sum / GaloisElement(__base-1))
     return A
+
+def convolve(A,B):
+    if not all(isinstance(x, GaloisElement) for x in A):
+        A = to_GaloisElement(A)
+    if not all(isinstance(x, GaloisElement) for x in B):
+        B = to_GaloisElement(B)
+    base = A[0].base
+
+    if len(A)!=base-1:
+        print("Warning in convolve: A is not of length base-1. Assuming 0 for the rest of the elements")
+        while len(A) < base-1:
+            A.append(GaloisElement(0))
+    if len(B)!=base-1:
+        print("Warning in convolve: B is not of length base-1. Assuming 0 for the rest of the elements")
+        while len(B) < base-1:
+            B.append(GaloisElement(0))
+
+    C = []
+    for i in range(base-1):
+        sum=0
+        for j in range(base-1):
+            sum += A[j]*B[-j+i]
+        C.append(sum)
+    return C
