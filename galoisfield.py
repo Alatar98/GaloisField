@@ -225,7 +225,7 @@ def to_GaloisElement(value):
     return GaloisElement(value)
     
 
-def transform(A):
+def inverse_transform(A):
     if not all(isinstance(x, GaloisElement) for x in A):
         A = to_GaloisElement(A)
     a = []
@@ -237,7 +237,7 @@ def transform(A):
     return a
 
 
-def inverse_transform(a):
+def direct_transform(a):
     if not all(isinstance(x, GaloisElement) for x in a):
         a = to_GaloisElement(A)
     A = []
