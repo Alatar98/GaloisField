@@ -239,7 +239,7 @@ def inverse_transform(A):
 
 def direct_transform(a):
     if not all(isinstance(x, GaloisElement) for x in a):
-        a = to_GaloisElement(A)
+        a = to_GaloisElement(a)
     A = []
     for i in range(0,__base-1):
         sum = 0     #this does not have to be a GaloisElement because radd with integers works if the integer is 0

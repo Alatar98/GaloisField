@@ -121,3 +121,7 @@ print([n.value for n in G])
 print("A(x),a_i",[n.value for n in A],[n.value for n in gf.inverse_transform(A)])
 print("B(x),b_i",[n.value for n in B],[n.value for n in gf.inverse_transform(B)])
 print("D(x),d_i",[n.value for n in D],[n.value for n in gf.inverse_transform(D)])
+
+
+
+print([n.value for n in gf.inverse_transform([1,1,0,0,0,0])])
