@@ -1,4 +1,5 @@
 import numbers
+from typing import Any
 
 
 __base = 7
@@ -271,3 +272,114 @@ def convolve(A,B):
             sum += A[j]*B[-j+i]
         C.append(sum)
     return C
+
+
+class  GaloisPolynomial:
+    def __init__(self, coefficients):
+        if not hasattr(coefficients, "__len__"):
+            raise TypeError(f"coefficients must be a list, not '{type(coefficients).__name__}'")
+        if not all(isinstance(x, GaloisElement) for x in coefficients):
+            coefficients = to_GaloisElement(coefficients)
+        if len(coefficients) > get_base()-1:
+            raise ValueError(f"Length of coefficients must be smaller than {get_base()-1}, not {len(coefficients)}")
+        while len(coefficients) < get_base()-1:
+            coefficients.append(GaloisElement(0))
+
+        self.coefficients = coefficients
+        self.base = coefficients[0].base
+
+    def __add__(self, other):
+        if isinstance(other, GaloisElement):
+            other = GaloisPolynomial([other])
+        if not isinstance(other, GaloisPolynomial):
+            raise TypeError(
+                f"'+' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'"
+                )
+        if self.base != other.base:
+            raise ValueError("Base mismatch")
+        return GaloisPolynomial([self[i] + other[i] for i in range(len(self))])
+    
+    def __sub__(self, other):
+        if not isinstance(other, GaloisPolynomial):
+            raise TypeError(
+                f"'-' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'"
+                )
+        if self.base != other.base:
+            raise ValueError("Base mismatch")
+        return GaloisPolynomial([self[i] - other[i] for i in range(len(self))])
+    
+    
+    def __mul__(self, other):
+        if isinstance(other, GaloisElement):
+            other = GaloisPolynomial([other])
+        if not isinstance(other, GaloisPolynomial):
+            raise TypeError(
+                f"'*' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'"
+                )
+        if self.base != other.base:
+            raise ValueError("Base mismatch")
+        C = []
+        for i in range(self.base-1):
+            sum = 0
+            for j in range(self.base-1):
+                sum += self[j]*other[-j+i]
+            C.append(sum)
+        return GaloisPolynomial(C)
+    
+    
+    def __truediv__(self, other):
+        if not isinstance(other, GaloisPolynomial):
+            raise TypeError(
+                f"'/' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'"
+                )
+        if self.base != other.base:
+            raise ValueError("Base mismatch")
+        
+        if other.degree() > self.degree():
+            return GaloisPolynomial([GaloisElement(0)]), self.copy()
+        
+        quotient = []
+        remainder = self.copy()
+
+        self_deg = self.degree()
+        deg_diff = self.degree()-other.degree()
+
+        for i in range(deg_diff + 1):
+            quotient.insert(0,remainder[self_deg-i] / other[self_deg-deg_diff])
+            remainder -= ((other**(deg_diff-i))*quotient[0])
+
+
+        return GaloisPolynomial(quotient), remainder
+    
+    def __pow__(self, power):
+        if not isinstance(power, numbers.Integral):
+            raise TypeError(
+                            f"'**' not supported between instances of '{type(self).__name__}' and noninteger('{type(power).__name__}'"
+                            )
+        tmp = GaloisPolynomial([0])
+        for i in range(self.base-1):
+            tmp[(i+power)%(self.base-1)] = self[i]
+        return tmp
+    
+    def degree(self):
+        for i in range(self.base-2, 0, -1):
+            if self[i] != GaloisElement(0):
+                return i
+        return 0
+
+    def __str__(self):
+        return str([n.value for n in self])
+    
+    def __len__(self):
+        return len(self.coefficients)
+
+    def __getitem__(self, index):
+        return self.coefficients[index]
+    
+    def __setitem__(self, index, value):
+        if not isinstance(value, GaloisElement):
+            raise TypeError(f"Value must be a GaloisElement, not '{type(value).__name__}'")
+        self.coefficients[index] = value
+
+    def copy(self):
+        return GaloisPolynomial(self.coefficients.copy())

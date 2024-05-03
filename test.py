@@ -1,5 +1,6 @@
 import galoisfield as gf
 from galoisfield import GaloisElement as ge
+from galoisfield import GaloisPolynomial as gp
 
 import numpy as np
 
@@ -123,5 +124,48 @@ print("B(x),b_i",[n.value for n in B],[n.value for n in gf.inverse_transform(B)]
 print("D(x),d_i",[n.value for n in D],[n.value for n in gf.inverse_transform(D)])
 
 
+A = gp([3,4,2,5,1,0])
+B = gp([2,5,1,3,0,0])
 
-print([n.value for n in gf.inverse_transform([1,1,0,0,0,0])])
+C = A*B
+D = A+B
+
+E = A*ge(1)
+
+F = A-B
+
+print(A)
+print(B)
+print(C)
+print(D)
+print(E)
+
+print(F)
+
+print(A.degree())
+print(C.degree())
+print(B.degree())
+
+print(A**2)
+
+print("##################")
+q,r = A/B
+print(q)
+print(r)
+
+print(B*q)
+print(B*q+r)
+
+print("#############")
+N=gp([0,0,0,0,1,1])
+Z=gp([4,2,3,6,1,0])
+
+q,r = N/Z
+print(q)
+print(r)
+
+
+a=N-r
+
+print(a)
+
