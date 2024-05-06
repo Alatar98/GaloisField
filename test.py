@@ -2,6 +2,8 @@ import galoisfield as gf
 from galoisfield import GaloisElement as ge
 from galoisfield import GaloisPolynomial as gp
 
+import reedsolomon as rs
+
 import numpy as np
 
 
@@ -169,3 +171,10 @@ a=N-r
 
 print(a)
 
+
+p1 = gp([3,1])
+p2 = gp([1,1])
+p3 = gp([5,1])
+p4 = gp([4,1])
+
+print(p1*p2*p3*p4)
