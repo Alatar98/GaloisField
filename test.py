@@ -178,3 +178,11 @@ p3 = gp([5,1])
 p4 = gp([4,1])
 
 print(p1*p2*p3*p4)
+
+
+print("####################")
+
+print(-ge(3)/ge(6))
+print(-ge(3)*ge(3)/ge(6))
+
+print(gp(gf.inverse_transform([2,3,1])))
