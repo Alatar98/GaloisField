@@ -50,17 +50,36 @@ class coder:
 
         return syndrome
     
-    def calc_c(self, syndrome, f_n):
+    def calc_c(self, syndrome, f_max):
         if self.coder_type == "systematic":
             
-            a = np.array([0]*len(syndrome-1).append(1))
-            for i in range(len(syndrome)):
-                a = np.vstack((a,np.array([0]*len(syndrome-1).append(f_n**i))))
+            a = gp([1 if i == self.n-self.k else 0 for i in range(self.n)])
+            b = gp(syndrome)
+            q,r = a/b
+            v_old = gp([1])
+            v_cur = gp([0])
+            w_old = gp([0])
+            w_cur = gp([1])
 
-            c = np.linalg.solve(a,np.array([1].append([0]*len(syndrome-1))))
-            c = gp(c)
+            v_new = v_old - q*v_cur
+            w_new = w_old - q*w_cur
+            while r.degree() >=2:
+                a = b
+                b = r
+                q,r = a/b
+
+                [v_old,v_cur] = [v_cur,v_new]
+                [w_old,w_cur] = [w_cur,w_new]
+
+                v_new = v_old - q*v_cur
+                w_new = w_old - q*w_cur
+            
+            c = gp([1])-q*w_cur
+            
         else:
             raise NotImplementedError("Only systematic encoding is implemented")
 
         return c
+    
+    
         
